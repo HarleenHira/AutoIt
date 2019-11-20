@@ -1,0 +1,43 @@
+       public ArgusEnterprise Upload(string fileName,string validityOfCertificate)
+        {
+            try
+            {
+                if (validityOfCertificate.Equals("Valid"))
+                {
+                    AutoItX.WinWait("Open", "myX509Cert.crt", 1);
+                    AutoItX.WinActivate("Open", "myX509Cert.crt");
+                    AutoItX.ControlFocus("Open", "", "Edit1");
+                    AutoItX.ControlSetText("Open", "", "Edit1", "D:\\Cert\\Valid\\myX509Cert.crt");
+                    AutoItX.ControlClick("Open", "", "Button1");
+                    PageBase.WriteLog(Logger.LogLevel.Success, "Able to select the file from the location and click on Open button");
+                }
+            }
+            catch(Exception ex)
+            {
+                PageBase.WriteLog(Logger.LogLevel.Error, "Unable to upload the certificate from data services tab window");
+            }
+            try
+            {
+                if (validityOfCertificate.Equals("Invalid"))
+                {
+                    AutoItX.WinWait("Open", "Invalidfile.txt", 1);
+                    AutoItX.WinActivate("Open", "Invalidfile.txt");
+                    AutoItX.ControlFocus("Open", "", "Edit1");
+                    AutoItX.ControlSetText("Open", "", "Edit1", "D:\\Cert\\Invalid\\Invalidfile.txt");
+                    AutoItX.ControlClick("Open", "", "Button1");
+                    var wait = new WebDriverWait(Browser.webDriver, TimeSpan.FromSeconds(20));
+                    wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.CssSelector(INVALID_FILETYPE_MESSAGE)));
+                    if (invalidFileType_message.Text.Trim().Equals("Invalid File. Please upload valid file type"))
+                    {
+                        PageBase.WriteLog(Logger.LogLevel.Success, "Able to view the alert message for invalid file type:" + invalidFileType_message.Text.Trim());
+                    }
+                    
+                    Thread.Sleep(8000);
+                }
+            }
+            catch (Exception ex)
+            {
+                PageBase.WriteLog(Logger.LogLevel.Error, "Unable to view the alert message for invalid file type");
+            }
+            return this;
+        }
